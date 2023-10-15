@@ -1,0 +1,227 @@
+---
+title: "Business Intelligence Lab Submission Markdown"
+author: "<Specify your group name here>"
+date: "<Specify the date when you submitted the lab>"
+output:
+  github_document: 
+    toc: yes
+    toc_depth: 4
+    fig_width: 6
+    fig_height: 4
+    df_print: default
+editor_options:
+  chunk_output_type: console
+---
+
+# Student Details
+
++---------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| **Student ID Numbers and Names of Group Members** 
+|                                                   |                                                                                                                                                                          |
+|                                                   | 1.  134780 - C - Trevor Okinda                                                                                                                                              |
+|                                                   |                                                                                                                                                                          |
+|                                                   | 2.  132840 - C - Sheila Wangui                                                                                                                                              |
+|                                                   |                                                                                                                                                                          |
+|                                                   | 3.  131749 - C - Teresia Nungari                                                                                                                                              |
+|                                                   |                                                                                                                                                                          |
+|                                                   | 4.  135203 - C - Tom Arnold                                                                                                                                              |
+|                                                   |                                                                                                                                                                          |
+|                                                   |                                                                                                                                              |
++---------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| **GitHub Classroom Group Name**                   | Lakers                                                                                                       
++---------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| **Course Code**                                   | BBT4206                                                                                                                                                                  |
++---------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| **Course Name**                                   | Business Intelligence II                                                                                                                                                 |
++---------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| **Program**                                       | Bachelor of Business Information Technology                                                                                                                              |
++---------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| **Semester Duration**                             | 21^st^ August 2023 to 28^th^ November 2023                                                                                                                               |
++---------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+# Setup Chunk
+
+We start by installing all the required packages
+
+```{r Install Packages, echo=TRUE, message=FALSE, warning=FALSE}
+## mlbench ----
+if (require("mlbench")) {
+  require("mlbench")
+} else {
+  install.packages("mlbench", dependencies = TRUE,
+                   repos = "https://cloud.r-project.org")
+}
+
+## caret ----
+if (require("caret")) {
+  require("caret")
+} else {
+  install.packages("caret", dependencies = TRUE,
+                   repos = "https://cloud.r-project.org")
+}
+
+## klaR ----
+if (require("klaR")) {
+  require("klaR")
+} else {
+  install.packages("klaR", dependencies = TRUE,
+                   repos = "https://cloud.r-project.org")
+}
+
+## e1071 ----
+if (require("e1071")) {
+  require("e1071")
+} else {
+  install.packages("e1071", dependencies = TRUE,
+                   repos = "https://cloud.r-project.org")
+}
+
+## readr ----
+if (require("readr")) {
+  require("readr")
+} else {
+  install.packages("readr", dependencies = TRUE,
+                   repos = "https://cloud.r-project.org")
+}
+
+## LiblineaR ----
+if (require("LiblineaR")) {
+  require("LiblineaR")
+} else {
+  install.packages("LiblineaR", dependencies = TRUE,
+                   repos = "https://cloud.r-project.org")
+}
+
+## naivebayes ----
+if (require("naivebayes")) {
+  require("naivebayes")
+} else {
+  install.packages("naivebayes", dependencies = TRUE,
+                   repos = "https://cloud.r-project.org")
+}
+```
+
+------------------------------------------------------------------------
+
+**Note:** the following "*KnitR*" options have been set as the defaults in this markdown:\
+`knitr::opts_chunk$set(echo = TRUE, warning = FALSE, eval = TRUE, collapse = FALSE, tidy.opts = list(width.cutoff = 80), tidy = TRUE)`.
+
+More KnitR options are documented here <https://bookdown.org/yihui/rmarkdown-cookbook/chunk-options.html> and here <https://yihui.org/knitr/options/>.
+
+```{r setup, echo=TRUE, message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(
+	eval = TRUE,
+	echo = TRUE,
+	warning = FALSE,
+	collapse = FALSE,
+	tidy = TRUE
+)
+```
+
+------------------------------------------------------------------------
+
+**Note:** the following "*R Markdown*" options have been set as the defaults in this markdown:
+
+> output:\
+> \
+> github_document:\
+> toc: yes\
+> toc_depth: 4\
+> fig_width: 6\
+> fig_height: 4\
+> df_print: default\
+> \
+> editor_options:\
+> chunk_output_type: console
+
+# Load dataset
+
+Load the PimaIndiansDiabetes dataset and check its structure
+
+```{r Load dataset}
+library(mlbench)
+data("PimaIndiansDiabetes")
+# Check the structure of the dataset
+str(PimaIndiansDiabetes)
+```
+
+## Scale Data Transform
+
+
+```{r Scale Data Transform}
+# BEFORE
+summary(student_performance_dataset)
+
+model_of_the_transform <- preProcess(student_performance_dataset, method = c("scale"))
+print(model_of_the_transform)
+student_perfomance_dataset_scale_transform <- predict(model_of_the_transform,
+                                          student_performance_dataset)
+# AFTER
+summary(student_perfomance_dataset_scale_transform)
+
+```
+
+Next, Center Data Transform
+
+```{r Center Data Transform}
+# BEFORE
+summary(student_performance_dataset)
+
+model_of_the_transform <- preProcess(student_performance_dataset, method = c("center"))
+print(model_of_the_transform)
+student_performance_dataset_center_transform <- predict(model_of_the_transform, # nolint
+                                           student_performance_dataset)
+
+# AFTER
+summary(student_performance_dataset_center_transform)
+
+```
+
+# Standardize Data Transform
+
+
+```{r Standardize Data Transform}
+# BEFORE
+summary(student_performance_dataset)
+
+
+model_of_the_transform <- preProcess(student_performance_dataset,
+                                     method = c("scale", "center"))
+print(model_of_the_transform)
+student_performance_dataset_standardize_transform <- predict(model_of_the_transform, # nolint
+                                                student_performance_dataset)
+# AFTER
+summary(student_performance_dataset_standardize_transform)
+
+```
+
+## Normalize Data Transform
+
+```{r Normalize Data Transform}
+#### The Normalize Transform on the Student Performance Dataset ----
+summary(student_performance_dataset)
+model_of_the_transform <- preProcess(student_performance_dataset, method = c("range"))
+print(model_of_the_transform)
+student_performance_dataset_normalize_transform <- predict(model_of_the_transform, # nolint
+                                              student_performance_dataset)
+summary(student_performance_dataset_normalize_transform)
+
+```
+
+## Box-Cox Power Transform
+
+```{r Box-Cox Power Transform}
+summary(student_performance_dataset)
+
+
+model_of_the_transform <- preProcess(student_performance_dataset, method = c("BoxCox"))
+print(model_of_the_transform)
+student_performance_dataset_box_cox_transform <- predict(model_of_the_transform, # nolint
+                                                         student_performance_dataset)
+
+# AFTER
+summary(student_performance_dataset_box_cox_transform)
+
+```
+
+**etc.** as per the lab submission requirements. Be neat and communicate in a clear and logical manner.
