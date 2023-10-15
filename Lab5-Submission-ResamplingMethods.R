@@ -112,3 +112,21 @@ print(pima_nb_model)
 # View the confusion matrix
 confusion_matrix <- confusionMatrix(predictions_nb_e1071, testing_data$diabetes)
 print(confusion_matrix)
+
+# SVM Classifier using 5-fold cross-validation with 3 reps
+train_control <- trainControl(method = "repeatedcv", number = 5, repeats = 3)
+
+pima_svm_model <-
+  caret::train(diabetes ~ ., data = training_data,
+               trControl = train_control, na.action = na.omit,
+               method = "svmLinear", metric = "Accuracy")
+
+# Test the trained SVM model using the testing dataset
+predictions_svm <- predict(pima_svm_model, newdata = testing_data[, c("pregnant", "glucose", "pressure", "triceps", "insulin", "mass", "pedigree", "age")])
+
+# View a summary of the model
+print(pima_svm_model)
+
+# View the confusion matrix
+confusion_matrix <- confusionMatrix(predictions_svm, testing_data$diabetes)
+print(confusion_matrix)
