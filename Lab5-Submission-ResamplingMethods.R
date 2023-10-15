@@ -98,15 +98,15 @@ print(pima_lda_model)
 confusion_matrix <- confusionMatrix(predictions_lda, testing_data$diabetes)
 print(confusion_matrix)
 
-# 4.a. Train an e1071::naive Bayes classifier based on the diabetes variable
+# Train an e1071::naive Bayes classifier based on the diabetes variable
 pima_nb_model <-
   e1071::naiveBayes(diabetes ~ ., data = training_data)
 
-# 4.b. Test the trained naive Bayes classifier using the testing dataset
+# Test the trained naive Bayes classifier using the testing dataset
 predictions_nb_e1071 <-
   predict(pima_nb_model, newdata = testing_data[, c("pregnant", "glucose", "pressure", "triceps", "insulin", "mass", "pedigree", "age")])
 
-# 4.c. View a summary of the naive Bayes model
+# View a summary of the naive Bayes model
 print(pima_nb_model)
 
 # View the confusion matrix
