@@ -79,3 +79,21 @@ predictions_lr <- predict(pima_lr_model, newdata = testing_data[, c("pregnant", 
 # Print the model and predicted values
 print(pima_lr_model)
 print(predictions_lr)
+
+
+# LDA classifier based on a 5-fold cross-validation
+train_control <- trainControl(method = "cv", number = 5)
+
+pima_lda_model <- caret::train(diabetes ~ ., data = training_data,
+                               trControl = train_control, na.action = na.omit,
+                               method = "lda", metric = "Accuracy")
+
+# Test the trained LDA model using the testing dataset
+predictions_lda <- predict(pima_lda_model, newdata = testing_data[, c("pregnant", "glucose", "pressure", "triceps", "insulin", "mass", "pedigree", "age")])
+
+# View the summary of the model
+print(pima_lda_model)
+
+# View the confusion matrix
+confusion_matrix <- confusionMatrix(predictions_lda, testing_data$diabetes)
+print(confusion_matrix)
