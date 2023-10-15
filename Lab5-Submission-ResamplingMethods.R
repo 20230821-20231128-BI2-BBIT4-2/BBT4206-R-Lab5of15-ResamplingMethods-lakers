@@ -29,19 +29,8 @@ summary(pima_nb_model)
 predictions_nb_caret <- predict(pima_nb_model, newdata = testing_data[, c("pregnant", "glucose", "pressure", "triceps", "insulin", "mass", "pedigree", "age")])
 
 
-# Load the required packages
-library(e1071)
-library(caret)
-
-# Assuming you have already split your data into training and testing sets
-# Train a Naive Bayes classifier using the training dataset
-pima_nb_model <- naiveBayes(diabetes ~ pregnant + glucose + pressure + triceps + insulin + mass + pedigree + age, data = training_data)
-
-# Make predictions using the testing dataset
-predictions <- predict(pima_nb_model, newdata = testing_data)
-
 # Calculate the confusion matrix
-confusion_matrix <- confusionMatrix(predictions, testing_data$diabetes)
+confusion_matrix <- confusionMatrix(predictions_nb_caret, testing_data$diabetes)
 print(confusion_matrix)
 
 # Create a plot based on the confusion matrix
