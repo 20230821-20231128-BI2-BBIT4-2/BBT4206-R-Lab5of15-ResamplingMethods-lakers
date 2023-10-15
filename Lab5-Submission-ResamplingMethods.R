@@ -9,7 +9,7 @@ data("PimaIndiansDiabetes")
 # Check the structure of the dataset
 str(PimaIndiansDiabetes)
 
-# Example: Split the dataset into training and testing sets
+# Split the dataset into training and testing sets
 set.seed(123)  # Set a random seed for reproducibility
 
 
@@ -37,10 +37,9 @@ print(confusion_matrix)
 # Create a plot based on the confusion matrix
 plot(confusion_matrix$table)
 
-## 2. Train a linear regression model (for regression) ----
+## Train a linear regression model (for regression) ----
 
-### 2.a. Bootstrapping train control
-# Assuming you have already split your data into training and testing sets
+### Bootstrapping train control
 train_control <- trainControl(method = "boot", number = 500)
 
 pima_lm_model <- caret::train(diabetes ~

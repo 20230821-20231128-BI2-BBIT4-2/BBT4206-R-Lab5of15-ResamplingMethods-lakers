@@ -145,82 +145,105 @@ data("PimaIndiansDiabetes")
 str(PimaIndiansDiabetes)
 ```
 
-## Scale Data Transform
+## Split dataset
 
 
-```{r Scale Data Transform}
-# BEFORE
-summary(student_performance_dataset)
+```{r Split dataset}
+# Split the dataset into training and testing sets
+set.seed(123)  # Set a random seed for reproducibility
 
-model_of_the_transform <- preProcess(student_performance_dataset, method = c("scale"))
-print(model_of_the_transform)
-student_perfomance_dataset_scale_transform <- predict(model_of_the_transform,
-                                          student_performance_dataset)
-# AFTER
-summary(student_perfomance_dataset_scale_transform)
 
-```
-
-Next, Center Data Transform
-
-```{r Center Data Transform}
-# BEFORE
-summary(student_performance_dataset)
-
-model_of_the_transform <- preProcess(student_performance_dataset, method = c("center"))
-print(model_of_the_transform)
-student_performance_dataset_center_transform <- predict(model_of_the_transform, # nolint
-                                           student_performance_dataset)
-
-# AFTER
-summary(student_performance_dataset_center_transform)
+# Assuming "diabetes" is the target variable
+inTrain <- createDataPartition(y = PimaIndiansDiabetes$diabetes, p = 0.6, list = FALSE)
+training_data <- PimaIndiansDiabetes[inTrain, ]
+testing_data <- PimaIndiansDiabetes[-inTrain, ]
 
 ```
 
-# Standardize Data Transform
+Next, we create a Naive Bayes classifier using the Pima Indians Diabetes dataset
+
+```{r Naive Bayes classifier}
+# Create a Naive Bayes classifier using the Pima Indians Diabetes dataset
+pima_nb_model <- e1071::naiveBayes(diabetes ~ pregnant + glucose + pressure + triceps + insulin + mass + pedigree + age, data = PimaIndiansDiabetes)
+
+# Check the summary of the Naive Bayes model
+summary(pima_nb_model)
+
+# Assuming you have already trained the Naive Bayes model (pima_nb_model) and have a testing dataset (testing_data)
+predictions_nb_caret <- predict(pima_nb_model, newdata = testing_data[, c("pregnant", "glucose", "pressure", "triceps", "insulin", "mass", "pedigree", "age")])
 
 
-```{r Standardize Data Transform}
-# BEFORE
-summary(student_performance_dataset)
+# Calculate the confusion matrix
+confusion_matrix <- confusionMatrix(predictions_nb_caret, testing_data$diabetes)
+print(confusion_matrix)
 
-
-model_of_the_transform <- preProcess(student_performance_dataset,
-                                     method = c("scale", "center"))
-print(model_of_the_transform)
-student_performance_dataset_standardize_transform <- predict(model_of_the_transform, # nolint
-                                                student_performance_dataset)
-# AFTER
-summary(student_performance_dataset_standardize_transform)
+# Create a plot based on the confusion matrix
+plot(confusion_matrix$table)
 
 ```
 
-## Normalize Data Transform
+# Bootstrapping train control
+Training a linear regression model (for regression)
+
+
+```{r Bootstrapping train control}
+train_control <- trainControl(method = "boot", number = 500)
+
+pima_lm_model <- caret::train(diabetes ~
+                                              pregnant + glucose + pressure + triceps + insulin +
+                                              mass + pedigree + age,
+                                            data = training_data,
+                                            trControl = train_control,
+                                            na.action = na.omit, method = "glm", metric = "Accuracy")
+# Test the trained linear regression model using the testing dataset
+predictions_lm <- predict(pima_lm_model, newdata = testing_data[, c("pregnant", "glucose", "pressure", "triceps", "insulin", "mass", "pedigree", "age")])
+
+
+#View the predicted values for the observations
+print(predictions_lm)
+
+```
+
+## Binary Classification: Logistic Regression with 10-fold cross-validation
 
 ```{r Normalize Data Transform}
-#### The Normalize Transform on the Student Performance Dataset ----
-summary(student_performance_dataset)
-model_of_the_transform <- preProcess(student_performance_dataset, method = c("range"))
-print(model_of_the_transform)
-student_performance_dataset_normalize_transform <- predict(model_of_the_transform, # nolint
-                                              student_performance_dataset)
-summary(student_performance_dataset_normalize_transform)
+train_control <- trainControl(method = "cv", number = 10, classProbs = TRUE, summaryFunction = twoClassSummary)
+
+pima_lr_model <- caret::train(diabetes ~ .,
+                              data = training_data,
+                              trControl = train_control,
+                              na.action = na.omit,
+                              method = "glm", 
+                              family = "binomial", 
+                              metric = "ROC")
+
+# Test the trained logistic regression model using the testing dataset
+predictions_lr <- predict(pima_lr_model, newdata = testing_data[, c("pregnant", "glucose", "pressure", "triceps", "insulin", "mass", "pedigree", "age")])
+
+# Print the model and predicted values
+print(pima_lr_model)
+print(predictions_lr)
 
 ```
 
-## Box-Cox Power Transform
+## LDA classifier based on a 5-fold cross-validation
 
 ```{r Box-Cox Power Transform}
-summary(student_performance_dataset)
+train_control <- trainControl(method = "cv", number = 5)
 
+pima_lda_model <- caret::train(diabetes ~ ., data = training_data,
+                               trControl = train_control, na.action = na.omit,
+                               method = "lda", metric = "Accuracy")
 
-model_of_the_transform <- preProcess(student_performance_dataset, method = c("BoxCox"))
-print(model_of_the_transform)
-student_performance_dataset_box_cox_transform <- predict(model_of_the_transform, # nolint
-                                                         student_performance_dataset)
+# Test the trained LDA model using the testing dataset
+predictions_lda <- predict(pima_lda_model, newdata = testing_data[, c("pregnant", "glucose", "pressure", "triceps", "insulin", "mass", "pedigree", "age")])
 
-# AFTER
-summary(student_performance_dataset_box_cox_transform)
+# View the summary of the model
+print(pima_lda_model)
+
+# View the confusion matrix
+confusion_matrix <- confusionMatrix(predictions_lda, testing_data$diabetes)
+print(confusion_matrix)
 
 ```
 
