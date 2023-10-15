@@ -130,3 +130,17 @@ print(pima_svm_model)
 # View the confusion matrix
 confusion_matrix <- confusionMatrix(predictions_svm, testing_data$diabetes)
 print(confusion_matrix)
+
+# Train a Naive Bayes classifier based on LOOCV
+train_control <- trainControl(method = "LOOCV")
+
+pima_nb_loocv_model <- caret::train(diabetes ~ ., data = training_data,
+                                    trControl = train_control, na.action = na.omit,
+                                    method = "naive_bayes", metric = "Accuracy")
+
+# Test the trained model using the testing dataset
+predictions_nb_loocv <- predict(pima_nb_loocv_model, newdata = testing_data[, c("pregnant", "glucose", "pressure", "triceps", "insulin", "mass", "pedigree", "age")])
+
+# View the confusion matrix
+confusion_matrix <- confusionMatrix(predictions_nb_loocv, testing_data$diabetes)
+print(confusion_matrix)
