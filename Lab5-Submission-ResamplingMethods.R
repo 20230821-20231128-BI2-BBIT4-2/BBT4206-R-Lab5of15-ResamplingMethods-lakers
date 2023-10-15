@@ -49,18 +49,13 @@ pima_lm_model <- caret::train(diabetes ~
                                             data = training_data,
                                             trControl = train_control,
                                             na.action = na.omit, method = "glm", metric = "Accuracy")
-# 1. Test the trained linear regression model using the testing dataset
+# Test the trained linear regression model using the testing dataset
 predictions_lm <- predict(pima_lm_model, newdata = testing_data[, c("pregnant", "glucose", "pressure", "triceps", "insulin", "mass", "pedigree", "age")])
 
-# 2. View the RMSE
-rmse <- sqrt(mean((testing_data$diabetes - predictions_lm)^2))
-cat("RMSE:", rmse, "\n")
 
 #View the predicted values for the observations
 print(predictions_lm)
 
-
-# Assuming you have already split your data into training and testing sets
 
 # Binary Classification: Logistic Regression with 10-fold cross-validation
 train_control <- trainControl(method = "cv", number = 10, classProbs = TRUE, summaryFunction = twoClassSummary)
@@ -144,3 +139,4 @@ predictions_nb_loocv <- predict(pima_nb_loocv_model, newdata = testing_data[, c(
 # View the confusion matrix
 confusion_matrix <- confusionMatrix(predictions_nb_loocv, testing_data$diabetes)
 print(confusion_matrix)
+
