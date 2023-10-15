@@ -24,3 +24,17 @@ pima_nb_model <- e1071::naiveBayes(diabetes ~ pregnant + glucose + pressure + tr
 
 # Check the summary of the Naive Bayes model
 summary(pima_nb_model)
+
+# Assuming you have already trained the Naive Bayes model (pima_nb_model) and have a testing dataset (testing_data)
+predictions_nb_caret <- predict(pima_nb_model, newdata = testing_data[, c("pregnant", "glucose", "pressure", "triceps", "insulin", "mass", "pedigree", "age")])
+
+# View results
+# Confusion Matrix
+library(caret)
+confusion_matrix <- confusionMatrix(predictions_nb_caret, testing_data$diabetes)
+print(confusion_matrix)
+
+
+
+
+
